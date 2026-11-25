@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Iconfont search",
+    "description": "Searches iconfont.cn's public library for free icons and illustrations and returns ready-to-use SVG markup.",
+    "detail": "docs/DETAIL.md"
+  }
+}

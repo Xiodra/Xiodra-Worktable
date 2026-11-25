@@ -1,0 +1,9 @@
+# 依赖
+node_modules/
+
+# 运行时产物（每次启动都会重建，不入库）
+server.log
+server.log.prev
+data/electron-profile/
+data/engine-boot-fail.json
+captures/

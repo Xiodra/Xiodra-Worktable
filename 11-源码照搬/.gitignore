@@ -1,0 +1,69 @@
+# 依赖
+node_modules/
+.DS_Store
+*.7z
+*.zip
+_临时/
+发布/
+
+# 引擎数据（用户自己的，不入库）
+引擎数据/.dsh/sessions/
+引擎数据/.dsh/storages/
+引擎数据/.dsh/profiles/web/*
+!引擎数据/.dsh/profiles/web/cordis.yml
+!引擎数据/.dsh/profiles/web/cordis.patch.yml
+!引擎数据/.dsh/profiles/web/package.json
+!引擎数据/.dsh/profiles/web/pnpm-workspace.yaml
+引擎数据/.dsh/.credentials.yaml
+引擎数据/.dsh/.anonymous-user-id
+
+# 工作台运行时
+外壳/data/electron-profile/
+外壳/data/engine-boot-fail.json
+外壳/server.log
+外壳/server.log.prev
+外壳/captures/
+
+# 记忆内部层（保留骨架，不提交个人内容）
+引擎数据/.dsh/场景记忆/*/归档/*.md
+
+# ============ 2026-11-25 C′ 档：只提"壳"，不提个人内容 ============
+# 判据：本仓库是 public（github.com/Xiodra/Xiodra-Worktable），
+#       这些是 E 档（别的场景的私有记忆）与个人画像，公开即泄露。
+# 场景私有记忆：只留"代码仓库"自己那份，其余四场景一律排除
+引擎数据/.dsh/场景记忆/控制器/
+引擎数据/.dsh/场景记忆/DSH·GUI/
+引擎数据/.dsh/场景记忆/本地电脑/
+引擎数据/.dsh/场景记忆/自我复盘/
+引擎数据/.dsh/场景记忆/_归档-无场景模板/
+# 机主画像（个人偏好 / 红线 / 口味）
+引擎数据/.dsh/场景记忆/_共享记忆/机主画像.md
+引擎数据/.dsh/场景记忆/_共享记忆/机主画像参考.md
+# 场景即人的一面（含 Xiodra 真实原话）
+# 依据：《00-核心机制/六-场景即人的一面》§6 原文「本机具体内容（真实原话、雷区、应对）
+#       只存共享层，⛔ 不随仓库公开」
+引擎数据/.dsh/场景记忆/_共享记忆/场景即人的一面.md
+# 派单/回执台账（含会话 id 与派单正文）
+引擎数据/.dsh/场景记忆/_共享记忆/派单台账.json
+引擎数据/.dsh/场景记忆/_共享记忆/_回执记录.jsonl
+引擎数据/.dsh/场景记忆/_共享记忆/冲突.md
+引擎数据/.dsh/场景记忆/_共享记忆/_跨场景通知.md
+# 会话 id 相关（发布前红线判据）
+引擎数据/.dsh/场景记忆/_共享记忆/_体检-latest.json
+引擎数据/.dsh/场景记忆/_共享记忆/体检报告.md
+# 原始层（记忆全文存档，含真实对话）
+引擎数据/.dsh/场景记忆/*/原始层/
+# 损坏会话（含真实对话内容）
+引擎数据/_损坏会话-20261118/
+# 第三方二进制与媒体（该走 Releases，不进 git）
+MCP/github-mcp-server/github-mcp-server.exe
+外壳/renderer/assets/boot-video*.mp4
+# 嵌套仓库（上游 dsh，只读，另 clone）
+引擎/
+
+# 场景配置与身份索引（含真实 session id，2026-11-25 Xiodra 指定不入库）
+# 理由：这是 public 仓库；会话 id 属本机身份，公开即暴露"本机有哪几条会话"。
+# 只排除**含 id**的两类：scenarios/*.json（sessionId 三字段）与 _场景身份索引.md。
+# ✅ 保留 scenarios/*-context.md（定位卡，只写职责与资产，不含 id）。
+外壳/scenarios/*.json
+外壳/scenarios/_场景身份索引.md

@@ -1,0 +1,109 @@
+{
+  "name": "视频工作流",
+  "desc": "一段素材从原始文件到成片交付的固定工序",
+  "created": "2026-11-21",
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "input",
+      "name": "取素材",
+      "input": [],
+      "output": [
+        "原始素材.mp4"
+      ],
+      "next": [
+        "n2"
+      ],
+      "state": "pending",
+      "note": "从素材目录挑当天要用的片段",
+      "updated": "2026-11-21 09:07:30"
+    },
+    {
+      "id": "n2",
+      "type": "tool",
+      "name": "转码统一格式",
+      "input": [
+        "原始素材.mp4"
+      ],
+      "output": [
+        "素材-1080p.mp4"
+      ],
+      "next": [
+        "n3"
+      ],
+      "state": "pending",
+      "note": "ffmpeg 统一到 1080p / 30fps，避免后续拼接错帧",
+      "updated": "2026-11-21 09:07:33"
+    },
+    {
+      "id": "n3",
+      "type": "ai",
+      "name": "生成字幕",
+      "input": [
+        "素材-1080p.mp4"
+      ],
+      "output": [
+        "字幕.srt"
+      ],
+      "next": [
+        "n4"
+      ],
+      "state": "pending",
+      "note": "ASR 出初稿，人工校对专有名词",
+      "updated": "2026-11-21 09:07:36"
+    },
+    {
+      "id": "n4",
+      "type": "process",
+      "name": "剪辑拼接",
+      "input": [
+        "素材-1080p.mp4",
+        "字幕.srt"
+      ],
+      "output": [
+        "粗剪.mp4"
+      ],
+      "next": [
+        "n5"
+      ],
+      "state": "pending",
+      "note": "按脚本顺序拼接，烧入字幕",
+      "updated": "2026-11-21 09:07:38"
+    },
+    {
+      "id": "n5",
+      "type": "ai",
+      "name": "生成封面",
+      "input": [
+        "粗剪.mp4"
+      ],
+      "output": [
+        "封面.png"
+      ],
+      "next": [
+        "n6"
+      ],
+      "state": "pending",
+      "note": "从关键帧出一版封面，交 Xiodra 选",
+      "updated": "2026-11-21 09:07:40"
+    },
+    {
+      "id": "n6",
+      "type": "output",
+      "name": "交付成片",
+      "input": [
+        "粗剪.mp4",
+        "封面.png"
+      ],
+      "output": [
+        "成片.mp4",
+        "封面.png",
+        "发布文案.md"
+      ],
+      "next": [],
+      "state": "pending",
+      "note": "三件套齐了才算交付",
+      "updated": "2026-11-21 09:07:42"
+    }
+  ]
+}

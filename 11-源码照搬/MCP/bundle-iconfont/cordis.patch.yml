@@ -1,0 +1,25 @@
+# iconfont 搜索（MCP）
+#
+# 把社区包 @dawipong/mcp-iconfont 作为 stdio MCP 服务器接进来，给模型一个工具：
+#   mcp__iconfont__search_icons
+#
+# ⚠ 路径为什么这么写：
+#   ① MCP 子进程的 cwd 不由我们控制，相对路径会在别处解析失败；写死盘符换机就废。
+#   ② 子进程环境会被清洗（删除所有 DSH_* 变量），所以路径必须在**父进程**算好再传进去。
+#   ③ !!js 的求值上下文是 ESM：⛔ 不能用 require（会 ReferenceError: require is not defined），
+#      只能用全局对象与字符串方法。DSH_HOME = <工作台根>\引擎数据\.dsh，
+#      去掉末尾两段就是工作台根。
+- insert:
+    - id: mcp-iconfont
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: iconfont
+        transport: stdio
+        command: !!js process.env.DSH_NODE_EXECUTABLE || 'node'
+        args:
+          - !!js String(process.env.DSH_HOME || '').replace(/[\\/]引擎数据[\\/]\.dsh[\\/]?$/, '') + '/MCP/mcp-iconfont/dist/index.js'
+        cwd: !!js String(process.env.DSH_HOME || '').replace(/[\\/]引擎数据[\\/]\.dsh[\\/]?$/, '') + '/MCP/mcp-iconfont'
+        # 插画搜索要服务端逐个下载 SVG，比图标慢得多，给足预算
+        toolCallTimeoutMs: 45000
+        startupTimeoutMs: 30000
+        failOnStartupError: true

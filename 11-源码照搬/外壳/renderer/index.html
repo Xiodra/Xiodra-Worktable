@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <!-- ⚠ CSP 里的 img/media 必须放行 file:（2026-09-26 实测踩到）：
+       本页面自身是 file:// 加载的，而 file:// 在 Chromium 里是 **opaque origin** ⇒ `'self'` 匹配不上，
+       本地图片 / 视频会**全部**被 CSP 拦掉（表现：一片"破图"占位符）。
+       放行范围只到 file:，script-src 仍是 'self'（不外链、不 eval）。 -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data: file:; media-src 'self' data: blob: file:; frame-src 'self' file: http://127.0.0.1:33083;" />
+  <title>XIODRA 工作台</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- 控制室（控制器场景）样式：原样移植自 dsh-worktable 的 styles.ts，未做设计改动 -->
+  <link rel="stylesheet" href="console.css" />
+  <!-- 外壳侧补充：卡片嵌进面板后的尺寸收敛 + 卡片右上角三个入口按钮（新增，不改 console.css） -->
+  <link rel="stylesheet" href="console-panel.css" />
+</head>
+<body>
+  <!-- ========== 自定义标题栏（无边框窗口，frame:false） ========== -->
+  <header id="titlebar">
+    <div class="titlebar-drag">
+      <span class="brand">
+        <span class="brand-name">XIODRA 工作台</span>
+        <!-- 悬停左上角品牌区显示的版本信息卡（内容由 renderer.js 从 main.js 的 app:version 填入）
+             ⚠ 用 position:fixed 定位：.titlebar-drag 带 overflow:hidden，普通绝对定位会被裁掉 -->
+        <span class="brand-tip" id="brand-tip" role="tooltip">
+          <span class="brand-tip-line brand-tip-title">DSH 引擎 <b id="ver-engine">—</b></span>
+          <span class="brand-tip-line">工作台 GUI <b id="ver-gui">—</b></span>
+          <span class="brand-tip-line" id="ver-runtime">运行时 —</span>
+          <span class="brand-tip-line brand-tip-dim" id="ver-dir">引擎目录 —</span>
+        </span>
+      </span>
+    </div>
+    <!-- ★标题栏正中：插件 / 技能 / 工具★（2026-11-21 按参考项目样式挪过来）
+         用绝对定位真正居中，不受左右两侧宽度影响（左右一变长也不会漂）。
+         ⚠ id 保持原样，renderer.js 是按 id 绑事件的。 -->
+    <div class="titlebar-center">
+      <button class="tb-btn tb-tools" id="btn-plugins" title="插件（Plugins）：查看已安装插件与用途">🧩</button>
+      <button class="tb-btn tb-tools" id="btn-skills" title="技能（Skills）：查看已安装技能与触发词">
+        <img class="tb-ico-img" src="assets/skills.svg" alt="" draggable="false" />
+      </button>
+      <button class="tb-btn tb-tools" id="btn-tools" title="工具（Tools）：查看 工具\ 下的脚本与用途">
+        <img class="tb-ico-img" src="assets/tools.svg" alt="" draggable="false" />
+      </button>
+      <!-- 2026-11-21 派单 f6b6b4baa8：接口已接（mcp:list / models:list），所以画出来 -->
+      <button class="tb-btn tb-tools" id="btn-mcp" title="MCP：查看已连接的 MCP 服务">
+        <img class="tb-ico-img" src="assets/MCP.svg" alt="" draggable="false" />
+      </button>
+      <button class="tb-btn tb-tools" id="btn-models" title="模型与提供方：查看 provider 与凭据是否已配（已脱敏）">🤖</button>
+
+    </div>
+    <!-- load-capsule-moved：负载胶囊（CPU/GPU/内存）独立一块，不放进"扩展入口"按钮组 -->
+    <span class="load-capsule" id="load-capsule" title="系统负载（每秒刷新）">
+      <span class="lc-item" id="lc-cpu"><span class="lc-k">CPU</span><span class="lc-v">—</span></span>
+      <span class="lc-sep">·</span>
+      <span class="lc-item" id="lc-gpu"><span class="lc-k">GPU</span><span class="lc-v">—</span></span>
+      <span class="lc-sep">·</span>
+      <span class="lc-item" id="lc-mem"><span class="lc-k">内存</span><span class="lc-v">—</span></span>
+    </span>
+    <div class="titlebar-controls">
+      <!-- ⛔ 只有真接口的按钮才画出来。「接口不存在就隐藏或禁用，不许给假按钮」。
+           2026-11-21：🧩插件 / ✨技能 / 🛠工具 三个接口已就绪（照搬参照 main.js 的
+           plugins:list / skills:list / tools:catalog），所以现在才画出来。
+           🤖模型 还没接（models:list 未移植）⇒ 继续不放。 -->
+      <!-- 主题（壁纸 + 外观）：设置存宿主端 data\theme.json，点开是右侧抽屉 -->
+      <button class="tb-btn tb-theme" id="btn-theme" title="主题（壁纸 / 外观）">
+        <img src="assets/theme.svg" alt="" draggable="false" />
+      </button>
+      <!-- 重启外壳（2026-11-25 Xiodra 要求）：收引擎 + 重拉，会中断当前会话。
+           图标 assets/reload.svg（自带红色 #E71F19，不随主题变色）。
+           实现见 main.js 的 app:restart —— ⛔ 不能让被杀的进程去重启自己。 -->
+      <button class="tb-btn tb-tools" id="btn-restart" title="重启外壳（结束引擎并重新拉起，会中断当前会话）">
+        <img class="tb-ico-img" src="assets/reload.svg" alt="" draggable="false" />
+      </button>
+      <!-- 刷新当前场景：重载引擎界面/场景，不动会话。图标 assets/刷新.svg（自带绿色 #28AA24） -->
+      <button class="tb-btn tb-tools" id="btn-refresh" title="刷新当前场景（重载引擎界面，不影响会话）">
+        <img class="tb-ico-img" src="assets/刷新.svg" alt="" draggable="false" />
+      </button>
+      <span class="tb-sep"></span>
+      <button class="tb-btn" id="btn-min" title="最小化">─</button>
+      <button class="tb-btn" id="btn-max" title="最大化">□</button>
+      <button class="tb-btn tb-close" id="btn-close" title="关闭">✕</button>
+    </div>
+  </header>
+
+  <!-- ========== 场景切换栏（独立组件） ========== -->
+  <header id="scenebar">
+    <div class="scenebar-inner">
+      <span class="scenebar-label">工作台</span>
+      <div class="scenebar-sep"></div>
+      <!-- 当前阶段只有一个场景：场景 0 = 内嵌 DSH 引擎（固定最前、不可拖） -->
+      <nav id="scenario-tabs"></nav>
+      <div class="scenebar-right">
+        <span id="status-dot" class="status-dot"></span>
+        <span id="status-text">连接中…</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== 场景 0：内嵌 DSH 引擎（默认初始界面） ========== -->
+  <section id="harness-view" class="view active">
+    <webview id="harness-webview"
+             class="harness-webview"
+             allowpopups
+             partition="persist:harness"></webview>
+
+    <!-- 启动加载页：引擎启动进度（加载不出来时也始终有进度条 + 重试） -->
+    <div id="boot-overlay" class="boot-overlay">
+      <div class="boot-card">
+        <div class="boot-logo"></div>
+        <div class="boot-title">DSH 引擎</div>
+        <div class="boot-stage" id="boot-stage">正在启动引擎…</div>
+        <div class="boot-bar"><div class="boot-bar-in" id="boot-bar-in"></div></div>
+        <div class="boot-meta">
+          <span id="boot-pct">0%</span>
+          <span id="boot-detail">—</span>
+        </div>
+        <div class="boot-actions">
+          <button id="boot-refresh" class="boot-btn">⟳ 立即进入</button>
+          <button id="boot-retry" class="boot-retry" style="display:none">🔄 重试启动</button>
+          <button id="boot-log" class="boot-btn boot-btn-ghost" style="display:none">看日志</button>
+        </div>
+        <div class="boot-hint">首次启动较慢；点「立即进入」可直接进入界面（等同切场景再切回来）</div>
+        <div class="boot-foot" id="boot-foot"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 场景视图：面板网格（场景 1..N 都渲染在这里，切场景=整块重建） ========== -->
+  <section id="scenario-view" class="view">
+    <div id="grid"></div>
+  </section>
+
+  <!-- ========== 壁纸层（主题功能，铺在最底层，不吃鼠标事件） ========== -->
+  <div id="wallpaper-layer" class="wallpaper-layer" aria-hidden="true">
+    <div id="wallpaper-media" class="wallpaper-media"></div>
+    <div id="wallpaper-dim" class="wallpaper-dim"></div>
+  </div>
+
+  <!-- ========== 主题抽屉（壁纸 / 外观） ========== -->
+  <div id="theme-drawer" class="theme-drawer" role="dialog" aria-modal="false" aria-label="主题">
+    <div class="td-head">
+      <span class="td-title">主题</span>
+      <span class="td-tabs">
+        <button class="td-tab is-on" data-tab="wallpaper" id="td-tab-wallpaper">壁纸</button>
+        <button class="td-tab" data-tab="look" id="td-tab-look">外观</button>
+      </span>
+      <button class="td-x" id="theme-x" title="关闭">✕</button>
+    </div>
+    <div class="td-body" id="theme-body"></div>
+    <div class="td-foot">
+      <button class="td-btn" id="theme-reset">恢复默认</button>
+      <span class="td-note">设置存在本机，不占 Token</span>
+    </div>
+  </div>
+
+  <!-- 弹窗（会话绑定 / 项目文件夹 / 换图标 都走这个壳） -->
+  <div id="modal-mask" class="modal-mask">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <span class="modal-title" id="modal-title">标题</span>
+        <button class="modal-x" id="modal-x" title="关闭">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-foot" id="modal-foot"></div>
+    </div>
+  </div>
+
+  <script src="markdown.js"></script>
+  <script src="renderers.js"></script>
+  <script src="webai.js"></script>
+  <script src="theme.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

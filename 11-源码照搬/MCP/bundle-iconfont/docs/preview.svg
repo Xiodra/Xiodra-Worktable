@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <rect width="640" height="360" rx="16" fill="#f6f8fb"/>
+  <!-- 左：搜索词 -->
+  <rect x="36" y="40" width="220" height="44" rx="10" fill="#fff" stroke="#d8dfe9" stroke-width="1.5"/>
+  <text x="56" y="68" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="17" fill="#1f2430">搜索</text>
+  <rect x="180" y="52" width="56" height="20" rx="10" fill="#e7eefc"/>
+  <text x="192" y="67" font-family="Segoe UI, sans-serif" font-size="12" fill="#3a7afe">icon</text>
+
+  <!-- 箭头 -->
+  <path d="M270 62h40" stroke="#b6c2d3" stroke-width="2.4" fill="none"/>
+  <path d="M304 56l8 6-8 6" stroke="#b6c2d3" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- 右：结果卡片 three -->
+  <g>
+    <rect x="332" y="34" width="128" height="112" rx="12" fill="#fff" stroke="#d8dfe9" stroke-width="1.5"/>
+    <circle cx="396" cy="78" r="14" fill="none" stroke="#3a7afe" stroke-width="3"/>
+    <path d="M406 88l10 10" stroke="#3a7afe" stroke-width="3" stroke-linecap="round"/>
+    <text x="352" y="128" font-family="Segoe UI, sans-serif" font-size="12" fill="#6b7789">search.svg</text>
+  </g>
+  <g>
+    <rect x="476" y="34" width="128" height="112" rx="12" fill="#fff" stroke="#d8dfe9" stroke-width="1.5"/>
+    <rect x="514" y="62" width="52" height="40" rx="6" fill="none" stroke="#1f9d6b" stroke-width="3"/>
+    <circle cx="528" cy="76" r="5" fill="#1f9d6b"/>
+    <text x="496" y="128" font-family="Segoe UI, sans-serif" font-size="12" fill="#6b7789">empty.svg</text>
+  </g>
+
+  <!-- 下：说明行 -->
+  <rect x="36" y="180" width="568" height="1" fill="#e3e9f1"/>
+  <text x="36" y="214" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="15" fill="#3d4759">一次调用同时拿到：id / 名字 / font_class / unicode / 尺寸 / 内联 SVG</text>
+  <text x="36" y="244" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="15" fill="#3d4759">图标（无填充色，可任意改色）与插画（服务端已下载 SVG）走同一返回结构</text>
+  <text x="36" y="274" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="15" fill="#8a94a6">中文关键词效果最好；插画比图标慢，建议 limit ≤ 6</text>
+
+  <!-- 右下角工具名 -->
+  <rect x="36" y="300" width="290" height="30" rx="8" fill="#1f2430"/>
+  <text x="52" y="320" font-family="Consolas, monospace" font-size="13" fill="#9fd2b5">mcp__iconfont__search_icons</text>
+</svg>

@@ -1,0 +1,22 @@
+{
+  "name": "@local/mcp-github-bundle",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Binds the official GitHub MCP server (github/github-mcp-server v2.2.0, Go binary, locally vendored) into DSH.",
+  "exports": {
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "cordis.patch.yml",
+    "locale/*.json",
+    "docs",
+    "icon.svg"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

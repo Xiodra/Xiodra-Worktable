@@ -1,0 +1,44 @@
+{
+  "areas": [
+    {
+      "id": "controller",
+      "name": "控制器",
+      "owner": "controller-chat",
+      "memory": "场景记忆/控制器",
+      "file": "areas/controller.md",
+      "panel": "controller-chat"
+    },
+    {
+      "id": "dsh-gui",
+      "name": "DSH·GUI",
+      "owner": "dsh-gui-chat",
+      "memory": "场景记忆/DSH·GUI",
+      "file": "areas/dsh-gui.md",
+      "panel": "dsh-gui-p3"
+    },
+    {
+      "id": "local",
+      "name": "本地电脑",
+      "owner": "local-chat",
+      "memory": "场景记忆/本地电脑",
+      "file": "areas/local.md",
+      "panel": "local-chat"
+    },
+    {
+      "id": "self-review",
+      "name": "自我复盘",
+      "owner": "self-review-chat",
+      "memory": "场景记忆/自我复盘",
+      "file": "areas/self-review.md",
+      "panel": "self-review-chat"
+    },
+    {
+      "id": "git-scene",
+      "name": "代码仓库",
+      "owner": "git-scene-chat",
+      "memory": "场景记忆/代码仓库",
+      "file": "areas/git-scene.md",
+      "panel": "git-scene-chat"
+    }
+  ]
+}

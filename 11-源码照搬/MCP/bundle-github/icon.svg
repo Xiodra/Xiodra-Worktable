@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
+  <!-- 主题：GitHub —— 圆环 + 分支节点（代码分叉） -->
+  <circle cx="18" cy="18" r="13" fill="none" stroke="#24292f" stroke-width="2.2"/>
+  <circle cx="12.5" cy="11.5" r="2.6" fill="#24292f"/>
+  <circle cx="12.5" cy="24.5" r="2.6" fill="#24292f"/>
+  <circle cx="23.5" cy="18" r="2.6" fill="#1f6feb"/>
+  <path d="M12.5 14.1v7.8" fill="none" stroke="#24292f" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M14.9 12.6c4.2 0.6 6 2.4 6.2 4.2" fill="none" stroke="#1f6feb" stroke-width="2.2" stroke-linecap="round"/>
+</svg>

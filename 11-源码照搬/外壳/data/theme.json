@@ -1,0 +1,20 @@
+{
+  "wallpaper": {
+    "path": "D:\\00-One's Own\\Wall\\Xiodra\\wallhaven-xiodra (009).png",
+    "kind": "image",
+    "fit": "cover",
+    "opacity": 100,
+    "blur": 0,
+    "dim": 10
+  },
+  "look": {
+    "mode": "dark",
+    "accent": "#2869e2",
+    "panelAlpha": 40,
+    "blur": 2,
+    "border": 0,
+    "radius": 10,
+    "font": "\"Yuppy SC\", \"Microsoft YaHei UI\", sans-serif",
+    "effect": "beam"
+  }
+}

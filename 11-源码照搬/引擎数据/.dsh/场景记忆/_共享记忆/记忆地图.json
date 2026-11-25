@@ -1,0 +1,18 @@
+{
+ "areas": [
+  {
+   "panel": "controller-chat",
+   "scene": "控制器",
+   "privateMemory": [
+    "控制器\\场景私有记忆.md"
+   ]
+  },
+  {
+   "panel": "dsh-gui-p3",
+   "scene": "DSH·GUI",
+   "privateMemory": [
+    "DSH·GUI\\场景私有记忆.md"
+   ]
+  }
+ ]
+}

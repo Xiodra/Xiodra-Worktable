@@ -1,0 +1,232 @@
+/* console.css —— 控制室（Console）样式，原样移植自 dsh-worktable
+   ─────────────────────────────────────────────────────────────
+   来源：dsh-worktable 0.5.1 · src/client/styles.ts（导出的 css 字符串）
+   移植日期：2026-11-16
+   范围：只保留控制室相关选择器 —— dsh-wt_console*（含 consoleCard / consoleGrid /
+         consoleIcon / consoleName / consoleDivider / consoleStatus* / consoleRuntime /
+         consolePreview / consoleSweep / consoleAdd* / consoleEmpty / consoleScroll /
+         consoleBg / consoleMedia / consoleDock* 等）、dsh-wt_blob*、dsh-wt_dockBtn*、
+         dsh-wt_drop*、dsh-wt_switch*、dsh-wt_hsl*、dsh-wt_thumbWrap / photoThumb /
+         thumbBadge / photoRow* / photoName / photoEmpty、dsh-wt_gridHalf / gridLabel、
+         dsh-wt_announce*、dsh-wt_hbar*、dsh-wt_dragHandle*，连同它们的子选择器、
+         伪元素、data-wt-* 属性选择器、@keyframes 与 @property。
+   未做设计改动、未精简、未新增样式；class 名保持 dsh-wt_ 前缀不变，因为渲染层会
+   原样输出这些 class，改名即全部失效。
+   主题：两套都保留 —— .dsh-wt_console 的 dark 缺省变量 + [data-wt-theme=light] 覆盖。
+   宿主变量：形如 var(--dsw-alias-*, <回退值>) 的写法一律原样保留（含回退值），
+   宿主未定义这些变量时本文件仍可独立运行；本范围内没有出现无回退值的宿主变量。
+   本文件不含任何外部样式导入，也不引用外部字体或图片（原文该范围内无资源地址）。
+   下列 --wt-* 不属于宿主 :root，由渲染层以行内 style 注入，原文已带回退值，
+   缺失时不影响外观：--wt-cols（列数，回退 3）、--wt-cardBlur（模糊半径，回退 0px）、
+   --wt-glowScale（光晕速度，回退 1）、--wt-gridPlain、--wt-gridPlainLight、
+   --wt-gridGlow、--wt-gridGlowLight、--wt-gridPhoto（网格线透明度）。
+   ───────────────────────────────────────────────────────────── */
+/* 控制室面板：项目卡片网格（每行 3 张、超出换行；DSH 简洁 + 苹果式卡片）。 */
+/* 主题变量自带作用域：dark 缺省；data-wt-theme=light 换浅色；system 由面板读宿主 color-scheme 落成 dark/light。 */
+.dsh-wt_console{--wt-bg:#0a0d13;--wt-card:#171c25;--wt-cardHover:#1d232e;--wt-border:#2a3140;--wt-borderHover:#39445a;--wt-text:#e6e8eb;--wt-text2:#9aa4b2;--wt-text3:#6e7683;--wt-chip:rgba(255,255,255,.06);--wt-grid:rgba(255,255,255,.045);--wt-shadow:0 6px 20px rgba(0,0,0,.35);position:relative;flex:1;min-height:0;overflow:hidden;padding:22px;display:flex;flex-direction:column;background-color:var(--wt-bg)}
+/* 流光玻璃背景：30px 网格不变；网格下层是缓慢漂移的模糊彩光光晕 */
+.dsh-wt_consoleBg{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.dsh-wt_consoleBg::after{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--wt-grid) 1px,transparent 1px),linear-gradient(90deg,var(--wt-grid) 1px,transparent 1px);background-size:30px 30px}
+.dsh-wt_blob{position:absolute;width:56vmax;height:56vmax;border-radius:50%;filter:blur(64px);opacity:.45;mix-blend-mode:screen}
+.dsh-wt_blob1{background:radial-gradient(circle,#ff5f9e,transparent 66%);top:-18%;left:-14%;animation:wtBlob1 calc(13s * var(--wt-glowScale,1)) ease-in-out infinite alternate}
+.dsh-wt_blob2{background:radial-gradient(circle,#7a5cff,transparent 66%);top:4%;right:-20%;animation:wtBlob2 calc(17s * var(--wt-glowScale,1)) ease-in-out infinite alternate}
+.dsh-wt_blob3{background:radial-gradient(circle,#00c2ff,transparent 66%);bottom:-22%;left:14%;animation:wtBlob3 calc(11s * var(--wt-glowScale,1)) ease-in-out infinite alternate}
+.dsh-wt_blob4{background:radial-gradient(circle,#ff9a3d,transparent 66%);bottom:-8%;right:4%;animation:wtBlob4 calc(15s * var(--wt-glowScale,1)) ease-in-out infinite alternate}
+@keyframes wtBlob1{from{transform:translate(0,0) scale(1)}to{transform:translate(14vw,10vh) scale(1.12)}}
+@keyframes wtBlob2{from{transform:translate(0,0) scale(1)}to{transform:translate(-13vw,11vh) scale(1.1)}}
+@keyframes wtBlob3{from{transform:translate(0,0) scale(1)}to{transform:translate(12vw,-8vh) scale(1.15)}}
+@keyframes wtBlob4{from{transform:translate(0,0) scale(1)}to{transform:translate(-10vw,-10vh) scale(1.12)}}
+.dsh-wt_console[data-wt-theme=light] .dsh-wt_blob{opacity:.28}
+.dsh-wt_consoleGrid{position:relative;z-index:1}
+/* 底部中央玻璃 dock：4 个 ghost 按钮（图标常显，hover 才浮现圆角矩形）+ 统一下拉面板（宽度 = dock 宽 150px） */
+.dsh-wt_consoleScroll{flex:1;min-height:0;overflow:auto;padding-bottom:10px}
+.dsh-wt_announceCtr{display:flex;min-height:100%;align-items:center;justify-content:center;box-sizing:border-box}
+.dsh-wt_announceCtr .dsh-wt_announce{margin:auto}
+.dsh-wt_announce{width:100%;max-width:856px;margin:0 auto;display:flex;flex-direction:column;gap:12px;padding:26px;border-radius:16px;background:linear-gradient(135deg,rgba(255,255,255,.22) 0%,rgba(255,255,255,.07) 30%,rgba(255,255,255,.01) 60%,rgba(0,0,0,.07) 100%),rgba(18,23,32,.24);border:1px solid transparent;box-shadow:0 10px 28px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.13);box-sizing:border-box;backdrop-filter:blur(8px) saturate(1.15);animation:wtAnnounceIn .28s cubic-bezier(.25,.6,.3,1)}
+.dsh-wt_console[data-wt-theme=light] .dsh-wt_announce{background:linear-gradient(135deg,rgba(255,255,255,1) 0%,rgba(255,255,255,.65) 30%,rgba(255,255,255,.12) 60%,rgba(31,41,55,.06) 100%),rgba(255,255,255,.34);box-shadow:0 10px 28px rgba(31,41,55,.18),inset 0 1px 0 rgba(255,255,255,1)}
+.dsh-wt_announceHead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-bottom:10px;border-bottom:1px solid var(--wt-border)}
+.dsh-wt_announceVer{font-size:15px;font-weight:700;color:var(--wt-text)}
+.dsh-wt_announceBtn{flex:none;padding:4px 12px;border:none;border-radius:7px;background:var(--wt-chip);color:var(--wt-text2);font:inherit;font-size:12px;line-height:17px;cursor:pointer;transition:background .15s ease,color .15s ease}
+.dsh-wt_announceBtn:hover{background:rgba(79,142,247,.22);color:var(--wt-text)}
+.dsh-wt_announceBtn:disabled{opacity:.6;cursor:default}
+.dsh-wt_announceAuto{flex:none;font-size:12px;line-height:17px;color:var(--wt-text2);margin-left:auto}
+.dsh-wt_announceUpdate{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 10px;border-radius:8px;background:rgba(79,142,247,.12)}
+.dsh-wt_announceNewVer{font-size:12px;line-height:17px;color:#7eb3ff;font-weight:600}
+.dsh-wt_announceUpg{flex:none;padding:3px 10px;border:none;border-radius:6px;background:rgba(79,142,247,.16);color:#7eb3ff;font:inherit;font-size:11px;line-height:16px;cursor:pointer}
+.dsh-wt_announceUpg:hover{background:rgba(79,142,247,.3);color:#bcd6ff}
+.dsh-wt_announceUpgOk{background:rgba(29,154,85,.2);color:#4ade80}
+.dsh-wt_announceUpgOk:hover{background:rgba(29,154,85,.3);color:#86efac}
+.dsh-wt_announceHow{flex:none;width:100%;font-size:11px;line-height:16px;color:var(--wt-text);padding-top:2px}
+.dsh-wt_announceSkip.dsh-wt_announceSkipGo:hover{background:rgba(79,142,247,.16);color:#7eb3ff}
+.dsh-wt_announceSkip{flex:none;padding:3px 10px;border:none;border-radius:6px;background:transparent;color:var(--wt-text3);font:inherit;font-size:11px;line-height:16px;cursor:pointer}
+.dsh-wt_announceSkip:hover{background:rgba(244,63,94,.14);color:#f87171}
+.dsh-wt_announceStatus{font-size:11px;line-height:16px;color:var(--wt-text3)}
+.dsh-wt_announceBody{white-space:pre-wrap;font-size:13px;line-height:1.75;color:var(--wt-text2);user-select:text}
+.dsh-wt_consoleDockWrap{position:relative;z-index:12;flex:none;display:flex;justify-content:center;padding-top:12px}
+.dsh-wt_consoleDock{display:flex;align-items:center;gap:4px;padding:5px;border-radius:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);box-shadow:0 8px 24px rgba(0,0,0,.35);backdrop-filter:blur(14px) saturate(1.3)}
+.dsh-wt_console[data-wt-theme=light] .dsh-wt_consoleDock{background:rgba(255,255,255,.62);border-color:rgba(27,31,36,.12);box-shadow:0 8px 24px rgba(31,41,55,.12)}
+.dsh-wt_dockBtn{position:relative;width:32px;height:32px;padding:0;border:none;border-radius:9px;background:transparent;color:var(--wt-text);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:background .15s ease}
+.dsh-wt_dockBadge{position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:#f5a623;box-shadow:0 0 6px rgba(245,166,35,.95);animation:wtAnnPulse 1.6s ease-in-out infinite}
+@keyframes wtAnnPulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes wtAnnounceIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+.dsh-wt_dockBtn svg{transition:transform .15s ease}
+.dsh-wt_dockBtn:hover svg{transform:scale(1.12)}
+.dsh-wt_dockBtn:hover{background:rgba(255,255,255,.14)}
+.dsh-wt_dockBtnOn{background:rgba(255,255,255,.22)}
+.dsh-wt_console[data-wt-theme=light] .dsh-wt_dockBtn:hover{background:rgba(27,31,36,.10)}
+.dsh-wt_console[data-wt-theme=light] .dsh-wt_dockBtnOn{background:rgba(27,31,36,.14)}
+.dsh-wt_dropMask{position:fixed;inset:0;z-index:9;background:transparent;border:none}
+.dsh-wt_drop{position:absolute;bottom:calc(100% - 4px);left:50%;transform:translateX(-50%);width:186px;box-sizing:border-box;padding:5px;border-radius:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);box-shadow:0 8px 24px rgba(0,0,0,.4);backdrop-filter:blur(14px) saturate(1.3);z-index:11;display:flex;flex-direction:column;gap:2px}
+.dsh-wt_dropItem{width:100%;padding:6px 9px;border:none;border-radius:7px;background:transparent;color:var(--wt-text2);font:inherit;font-size:12px;line-height:17px;cursor:pointer;display:flex;align-items:center;gap:7px;text-align:left}
+.dsh-wt_dropItem:hover{background:var(--wt-chip);color:var(--wt-text)}
+.dsh-wt_console[data-wt-theme=light] .dsh-wt_drop{background:rgba(255,255,255,.62);border-color:rgba(27,31,36,.12)}
+.dsh-wt_dropRow{display:flex;align-items:center;width:100%}
+.dsh-wt_dropRow .dsh-wt_dropItem{flex:1;min-width:0}
+.dsh-wt_dropGear{flex:none;width:24px;height:24px;margin-right:2px;padding:0;border:none;border-radius:6px;background:transparent;color:var(--wt-text2);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:background .15s ease,color .15s ease}
+.dsh-wt_dropGear:hover{background:var(--wt-chip);color:var(--wt-text)}
+.dsh-wt_dropWide{width:264px}
+.dsh-wt_dropTrash{flex:none;width:22px;height:22px;margin-right:2px;padding:0;border:none;border-radius:6px;background:transparent;color:var(--wt-text3);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:background .15s ease,color .15s ease}
+.dsh-wt_dragHandle{flex:none;width:18px;height:22px;padding:0;border:none;border-radius:6px;background:transparent;color:var(--wt-text3);cursor:grab;display:inline-flex;align-items:center;justify-content:center;transition:background .15s ease,color .15s ease;touch-action:none}
+.dsh-wt_dragHandle:hover{background:var(--wt-chip);color:var(--wt-text2)}
+.dsh-wt_dragHandleOn{background:var(--wt-chip);color:var(--wt-text);cursor:grabbing}
+.dsh-wt_dropTrash:hover{background:rgba(244,63,94,.16);color:#f87171}
+.dsh-wt_gridLabel{flex:none;white-space:nowrap;font-size:12px;line-height:17px;color:var(--wt-text2);padding:2px 2px 2px 4px}
+.dsh-wt_gridHalf .dsh-wt_switch{margin-right:2px}
+.dsh-wt_switch{flex:none;position:relative;width:30px;height:17px;margin-right:4px;padding:0;border:none;border-radius:999px;background:rgba(255,255,255,.14);cursor:pointer;transition:background .15s ease}
+.dsh-wt_switchOn{background:#4f8ef7}
+.dsh-wt_switchKnob{position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.4);transition:left .18s cubic-bezier(.22,.61,.36,1)}
+.dsh-wt_switchOn .dsh-wt_switchKnob{left:15px}
+.dsh-wt_console[data-wt-theme=light] .dsh-wt_switch{background:rgba(27,31,36,.15)}
+.dsh-wt_console[data-wt-bg=plain][data-wt-grid=on] .dsh-wt_consoleBg::after{background-image:linear-gradient(var(--wt-gridPlain,rgba(255,255,255,.045)) 1px,transparent 1px),linear-gradient(90deg,var(--wt-gridPlain,rgba(255,255,255,.045)) 1px,transparent 1px);background-size:30px 30px}
+.dsh-wt_console[data-wt-bg=glow][data-wt-grid=on] .dsh-wt_consoleBg::after{background-image:linear-gradient(var(--wt-gridGlow,rgba(255,255,255,.045)) 1px,transparent 1px),linear-gradient(90deg,var(--wt-gridGlow,rgba(255,255,255,.045)) 1px,transparent 1px);background-size:30px 30px}
+.dsh-wt_console[data-wt-bg=photo][data-wt-grid=on] .dsh-wt_consoleBg::after{background-image:linear-gradient(var(--wt-gridPhoto,rgba(255,255,255,.08)) 1px,transparent 1px),linear-gradient(90deg,var(--wt-gridPhoto,rgba(255,255,255,.08)) 1px,transparent 1px);background-size:30px 30px}
+.dsh-wt_console[data-wt-theme=light][data-wt-bg=plain][data-wt-grid=on] .dsh-wt_consoleBg::after{background-image:linear-gradient(var(--wt-gridPlainLight,rgba(27,31,36,.14)) 1px,transparent 1px),linear-gradient(90deg,var(--wt-gridPlainLight,rgba(27,31,36,.14)) 1px,transparent 1px);background-size:30px 30px}
+.dsh-wt_console[data-wt-theme=light][data-wt-bg=glow][data-wt-grid=on] .dsh-wt_consoleBg::after{background-image:linear-gradient(var(--wt-gridGlowLight,rgba(27,31,36,.14)) 1px,transparent 1px),linear-gradient(90deg,var(--wt-gridGlowLight,rgba(27,31,36,.14)) 1px,transparent 1px);background-size:30px 30px}
+.dsh-wt_console[data-wt-bg=photo][data-wt-grid=off] .dsh-wt_consoleBg::after{display:none}
+.dsh-wt_hslHead{display:flex;align-items:center;gap:4px;padding:2px 4px 4px}
+.dsh-wt_hslBack{flex:none;width:20px;height:20px;padding:0;border:none;border-radius:6px;background:transparent;color:var(--wt-text3);cursor:pointer;font-size:14px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+.dsh-wt_hslBack:hover{background:var(--wt-chip);color:var(--wt-text)}
+.dsh-wt_hslTitle{flex:1;min-width:0;font-size:12px;line-height:17px;color:var(--wt-text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dsh-wt_hslRow{position:relative;display:flex;align-items:center;gap:4px;padding:2px 3px;width:100%;box-sizing:border-box}
+.dsh-wt_hslRow::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% - 2px);transform:translateX(-50%);padding:3px 8px;border-radius:6px;background:rgba(10,13,19,.94);border:1px solid rgba(255,255,255,.22);color:#e6e8eb;font-size:11px;line-height:16px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .12s ease;z-index:30}
+.dsh-wt_hslRow:hover::after{opacity:1}
+.dsh-wt_hslLabel{flex:none;width:10px;font-size:9px;font-weight:600;color:var(--wt-text3);text-align:center}
+.dsh-wt_hslSlider{flex:1;min-width:0;height:14px;accent-color:#4f8ef7;cursor:pointer}
+.dsh-wt_hslInput{flex:none;width:42px;height:20px;padding:0 4px;border:1px solid var(--wt-border);border-radius:6px;background:var(--wt-chip);color:var(--wt-text2);font:inherit;font-size:10px;text-align:center;outline:none;box-sizing:border-box;font-variant-numeric:tabular-nums;-moz-appearance:textfield;appearance:textfield}
+.dsh-wt_hslInput::-webkit-outer-spin-button,.dsh-wt_hslInput::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.dsh-wt_hslInput:focus{border-color:#4f8ef7;color:var(--wt-text)}
+.dsh-wt_hslReset{margin:4px 4px 2px;padding:5px 9px;border:none;border-radius:7px;background:var(--wt-chip);color:var(--wt-text2);font:inherit;font-size:12px;line-height:17px;cursor:pointer;text-align:center}
+.dsh-wt_hslReset:hover{background:rgba(79,142,247,.22);color:var(--wt-text)}
+.dsh-wt_photoRow{cursor:pointer;padding:3px 4px;border-radius:7px;box-sizing:border-box}
+.dsh-wt_photoRow:hover{background:var(--wt-chip)}
+.dsh-wt_photoRowOn{background:var(--wt-chip)}
+.dsh-wt_photoThumb{flex:none;width:30px;height:30px;border-radius:7px;object-fit:cover;border:1px solid var(--wt-border);background:var(--wt-chip);box-sizing:border-box}
+.dsh-wt_photoName{flex:1;min-width:0;font-size:11px;line-height:16px;color:var(--wt-text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dsh-wt_photoEmpty{padding:4px 4px 2px;font-size:11px;line-height:16px;color:var(--wt-text3)}
+.dsh-wt_hslDivider{height:1px;margin:5px 4px;background:var(--wt-border);opacity:.5}
+.dsh-wt_consoleMedia{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.dsh-wt_gridHalf{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:4px;padding:0 2px;box-sizing:border-box}
+.dsh-wt_thumbWrap{position:relative;flex:none;width:30px;height:30px}
+.dsh-wt_thumbWrap .dsh-wt_photoThumb{position:absolute;inset:0}
+.dsh-wt_thumbBadge{position:absolute;right:-3px;bottom:-3px;width:14px;height:14px;border-radius:50%;background:rgba(10,13,19,.88);border:1px solid rgba(255,255,255,.4);color:#e6e8eb;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:2}
+.dsh-wt_photoThumb video,.dsh-wt_photoThumb{display:block}
+.dsh-wt_dropItemOn{background:var(--wt-chip);color:var(--wt-text);font-weight:600}
+.dsh-wt_hbar{position:relative;width:130px;height:26px;margin:4px auto;border-radius:999px;background:rgba(255,255,255,.08)}
+.dsh-wt_hbarFill{position:absolute;top:3px;bottom:3px;left:0;border-radius:999px;background:linear-gradient(90deg,#4f8ef7,#3b82f6);pointer-events:none;transition:width .25s cubic-bezier(.22,.61,.36,1)}
+.dsh-wt_hbarLine{position:absolute;top:0;bottom:0;transform:translateX(-50%);width:20%;padding:0;border:none;background:transparent;cursor:pointer;z-index:2}
+.dsh-wt_hbarLine::before{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:2px;height:9px;border-radius:2px;background:rgba(255,255,255,.9);transition:height .12s ease,background .12s ease}
+.dsh-wt_hbarLine:hover::before{height:14px;background:#fff}
+.dsh-wt_hbarKnob{position:absolute;top:50%;transform:translate(-50%,-50%);width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid rgba(79,142,247,.8);box-shadow:0 1px 4px rgba(0,0,0,.4);z-index:3;pointer-events:none;transition:left .25s cubic-bezier(.22,.61,.36,1)}
+/* 工作中的卡片流光：光带加长羽化 + 光层超出卡片（移动时不露整齐边缘），每 ~3.2s 从左上斜扫到右下 */
+.dsh-wt_consoleSweep{position:absolute;inset:-30%;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.01) 0%,rgba(255,255,255,.045) 30%,rgba(255,255,255,.13) 50%,rgba(255,255,255,.045) 70%,rgba(255,255,255,.01) 100%);opacity:0;animation:consoleSweep 3.2s ease-in-out infinite}
+.dsh-wt_console[data-wt-theme=light] .dsh-wt_consoleSweep{background:linear-gradient(115deg,rgba(255,255,255,.1) 0%,rgba(255,255,255,.3) 30%,rgba(255,255,255,.55) 50%,rgba(255,255,255,.3) 70%,rgba(255,255,255,.1) 100%)}
+@keyframes consoleSweep{0%{opacity:0;transform:translate(-12%,-12%)}35%{opacity:1}55%{opacity:1}92%,100%{opacity:0;transform:translate(12%,12%)}}
+.dsh-wt_console[data-wt-theme=light]{--wt-bg:#eef1f5;--wt-card:#ffffff;--wt-cardHover:#f7f9fb;--wt-border:#d8dee6;--wt-borderHover:#b9c4d2;--wt-grid:rgba(27,31,36,.07);--wt-text:#1c2128;--wt-text2:#57606a;--wt-text3:#8b949e;--wt-chip:rgba(27,31,36,.07);--wt-shadow:0 6px 20px rgba(31,41,55,.10)}
+.dsh-wt_consoleHead{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-bottom:12px}
+.dsh-wt_consoleTitle{font-size:14px;font-weight:700;line-height:20px;color:var(--wt-text)}
+.dsh-wt_consoleTheme{display:inline-flex;align-items:center;padding:2px;border:1px solid var(--wt-border);border-radius:999px;background:var(--wt-card)}
+.dsh-wt_consoleThemeBtn{flex:none;padding:3px 9px;border:none;border-radius:999px;background:transparent;color:var(--wt-text3);font:inherit;font-size:12px;line-height:18px;cursor:pointer;opacity:.85}
+.dsh-wt_consoleThemeBtn:hover{opacity:1;background:var(--wt-chip)}
+.dsh-wt_consoleThemeBtnOn{background:var(--wt-chip);color:var(--wt-text);opacity:1}
+.dsh-wt_consoleShape{display:inline-flex;align-items:center;padding:2px;border:1px solid var(--wt-border);border-radius:999px;background:var(--wt-card)}
+.dsh-wt_consoleShapeBtn{flex:none;width:26px;height:26px;padding:0;border:none;border-radius:999px;background:transparent;color:var(--wt-text3);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;opacity:.85}
+.dsh-wt_consoleShapeBtn:hover{opacity:1;background:var(--wt-chip)}
+.dsh-wt_consoleShapeBtnOn{background:var(--wt-chip);color:var(--wt-text);opacity:1}
+.dsh-wt_consoleBgBtns{display:inline-flex;align-items:center;padding:2px;border:1px solid var(--wt-border);border-radius:999px;background:var(--wt-card)}
+.dsh-wt_consoleBgBtn{flex:none;width:26px;height:26px;padding:0;border:none;border-radius:999px;background:transparent;color:var(--wt-text3);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;opacity:.85}
+.dsh-wt_consoleBgBtn:hover{opacity:1;background:var(--wt-chip)}
+.dsh-wt_consoleBgBtnOn{background:var(--wt-chip);color:var(--wt-text);opacity:1}
+.dsh-wt_console[data-wt-shape=circle] .dsh-wt_consoleGrid{max-width:calc(var(--wt-cols,3)*268px + (var(--wt-cols,3) - 1)*64px)}
+.dsh-wt_console[data-wt-shape=circle] .dsh-wt_consoleCard{border-radius:50%;justify-content:center;align-items:center;padding:24px 24px 38px;gap:9px}
+.dsh-wt_console[data-wt-shape=circle] .dsh-wt_consoleCardHead{width:100%;flex-direction:column;justify-content:center;gap:5px;text-align:center}
+.dsh-wt_console[data-wt-shape=circle] .dsh-wt_consoleIcon{font-size:27px;line-height:1}
+.dsh-wt_console[data-wt-shape=circle] .dsh-wt_consoleName{flex:none;max-width:88%;font-size:19px;font-weight:700;line-height:26px;text-align:center}
+.dsh-wt_console[data-wt-shape=circle] .dsh-wt_consoleDivider{width:56%;margin:2px auto}
+.dsh-wt_console[data-wt-shape=circle] .dsh-wt_consoleStatusRow{justify-content:center;gap:8px}
+.dsh-wt_console[data-wt-shape=circle] .dsh-wt_consoleStatus{font-size:17px;line-height:24px}
+.dsh-wt_console[data-wt-shape=circle] .dsh-wt_consoleRuntime{font-size:15px;line-height:21px}
+.dsh-wt_console[data-wt-shape=circle] .dsh-wt_consolePreview{text-align:center;max-width:82%;margin:0 auto;-webkit-line-clamp:2;font-size:9px;line-height:13px}
+.dsh-wt_console[data-wt-shape=circle] .dsh-wt_consoleCard-busy::before{border-radius:50%}
+.dsh-wt_consoleGrid{display:flex;flex-wrap:wrap;justify-content:center;gap:64px;align-content:start;margin-top:clamp(32px,9vh,110px);width:100%;max-width:calc(var(--wt-cols,3)*242px + (var(--wt-cols,3) - 1)*64px);margin-left:auto;margin-right:auto}
+.dsh-wt_consoleCols{display:inline-flex;align-items:center;gap:8px;padding:2px 8px;border:1px solid var(--wt-border);border-radius:999px;background:var(--wt-card);color:var(--wt-text3);font-size:11px}
+.dsh-wt_consoleCard{position:relative;box-sizing:border-box;flex:none;width:calc((100% - (var(--wt-cols,3) - 1)*64px)/var(--wt-cols,3));display:flex;flex-direction:column;gap:14px;aspect-ratio:1/1;min-height:192px;padding:21px;background:linear-gradient(135deg,rgba(255,255,255,.22) 0%,rgba(255,255,255,.07) 30%,rgba(255,255,255,.01) 60%,rgba(0,0,0,.07) 100%),rgba(18,23,32,.24);border:1px solid transparent;border-radius:16px;box-shadow:0 10px 28px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.13);cursor:pointer;transition:transform .14s ease,box-shadow .14s ease;overflow:hidden;backdrop-filter:blur(var(--wt-cardBlur,0px)) saturate(1.15)}
+/* 玻璃边缘：四角黑白渐变描边（左上/右下=白，右上/左下=黑），1px 环挖空实现 */
+.dsh-wt_consoleCard::after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;background:conic-gradient(from 45deg,rgba(0,0,0,.4) 0deg,rgba(255,255,255,.55) 90deg,rgba(0,0,0,.4) 180deg,rgba(255,255,255,.55) 270deg,rgba(0,0,0,.4) 360deg);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;pointer-events:none;opacity:.5}
+.dsh-wt_console[data-wt-theme=light] .dsh-wt_consoleCard{background:linear-gradient(135deg,rgba(255,255,255,1) 0%,rgba(255,255,255,.65) 30%,rgba(255,255,255,.12) 60%,rgba(31,41,55,.06) 100%),rgba(255,255,255,.34);box-shadow:0 10px 28px rgba(31,41,55,.18),inset 0 1px 0 rgba(255,255,255,1);backdrop-filter:blur(var(--wt-cardBlur,0px)) saturate(1.15)}
+.dsh-wt_console[data-wt-theme=light] .dsh-wt_consoleCard::after{background:conic-gradient(from 45deg,rgba(27,31,36,.4) 0deg,rgba(255,255,255,1) 90deg,rgba(27,31,36,.4) 180deg,rgba(255,255,255,1) 270deg,rgba(27,31,36,.4) 360deg);opacity:.9}
+/* 状态光效卡片：玻璃边缘让位给霓虹描边/旋转光环 */
+.dsh-wt_consoleCard-glowDone::after,.dsh-wt_consoleCard-glowNeed::after{opacity:0}
+.dsh-wt_consoleCard:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.09)}
+.dsh-wt_consoleCardSelf{cursor:default;opacity:.97}
+.dsh-wt_consoleCardHead{display:flex;align-items:center;gap:13px;min-width:0}
+.dsh-wt_consoleIcon{flex:none;font-size:31px;line-height:1}
+.dsh-wt_consoleName{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:20px;font-weight:700;line-height:28px;color:var(--wt-text)}
+.dsh-wt_consoleDivider{flex:none;height:1px;background:var(--wt-border)}
+.dsh-wt_consoleStatusRow{display:flex;align-items:baseline;justify-content:space-between;gap:9px;min-width:0}
+.dsh-wt_consoleStatus{flex:none;font-size:22px;font-weight:700;line-height:30px;color:var(--wt-text2)}
+.dsh-wt_consoleStatus-busy{color:var(--dsw-alias-state-accent-primary,#4f8ef7)}
+.dsh-wt_consoleStatus-need{color:var(--dsw-alias-state-warning,#d29922)}
+.dsh-wt_consoleStatus-done{color:var(--wt-text2)}
+.dsh-wt_consoleRuntime{flex:none;font-size:17px;font-weight:600;line-height:24px;color:var(--wt-text2);font-variant-numeric:tabular-nums}
+.dsh-wt_consolePreview{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;font-size:8.5px;line-height:13px;color:var(--wt-text2);word-break:break-word}
+.dsh-wt_consolePreviewNone{color:var(--wt-text3);font-style:italic;-webkit-line-clamp:1}
+/* 结束只用中性提醒光，不作为成功证明；待决=黄，工作=蓝色描边顺时针旋转 */
+.dsh-wt_consoleCard-glowDone{border-color:rgba(148,163,184,.8);box-shadow:0 0 8px rgba(148,163,184,.35),0 0 26px rgba(148,163,184,.2),inset 0 0 16px rgba(148,163,184,.05)}
+.dsh-wt_consoleCard-glowNeed{border-color:rgba(210,153,34,.95);box-shadow:0 0 8px rgba(210,153,34,.5),0 0 26px rgba(210,153,34,.3),inset 0 0 16px rgba(210,153,34,.08)}
+@property --consoleAngle{syntax:"<angle>";initial-value:0deg;inherits:false}
+.dsh-wt_consoleCard-busy{box-shadow:0 0 10px rgba(94,160,255,.55),0 0 34px rgba(79,142,247,.4)}
+.dsh-wt_consoleCard-busy::before{content:"";position:absolute;inset:-4px;border-radius:19px;padding:4px;background:conic-gradient(from var(--consoleAngle),transparent 0deg,rgba(94,160,255,0) 25deg,#dcebff 55deg,#9cc6ff 85deg,rgba(94,160,255,0) 125deg,transparent 200deg);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;animation:consoleAngleSpin 1.4s linear infinite;filter:drop-shadow(0 0 8px rgba(140,190,255,.85));pointer-events:none}
+@keyframes consoleAngleSpin{to{--consoleAngle:360deg}}
+.dsh-wt_console[data-wt-theme=light] .dsh-wt_consoleCard-busy{box-shadow:0 0 10px rgba(37,99,235,.5),0 0 34px rgba(37,99,235,.32)}
+.dsh-wt_console[data-wt-theme=light] .dsh-wt_consoleCard-busy::before{background:conic-gradient(from var(--consoleAngle),transparent 0deg,rgba(37,99,235,0) 25deg,#2563eb 55deg,#38bdf8 85deg,rgba(37,99,235,0) 125deg,transparent 200deg);filter:drop-shadow(0 0 8px rgba(37,99,235,.8))}
+.dsh-wt_consoleEmpty{padding:40px 0;text-align:center;font-size:12px;color:var(--wt-text3)}
+/* 创建卡片：虚线 + 居中加号，永远最后一位 */
+/* 创建卡片：玻璃底 + 虚线边，永远最后一位 */
+.dsh-wt_consoleAdd{justify-content:center;align-items:center;gap:10px;background:radial-gradient(circle at 50% 42%,rgba(255,255,255,.09),rgba(255,255,255,0) 65%),rgba(18,23,32,.34);border:1.5px dashed var(--wt-borderHover)}
+.dsh-wt_consoleAdd::after{display:none}
+.dsh-wt_console[data-wt-theme=light] .dsh-wt_consoleAdd{background:radial-gradient(circle at 50% 42%,rgba(255,255,255,.95),rgba(255,255,255,0) 65%),rgba(255,255,255,.55)}
+.dsh-wt_consoleAdd:hover{border-color:var(--dsw-alias-state-accent-primary,#4f8ef7);background:rgba(23,28,37,.45)}
+.dsh-wt_consoleAddPlus{font-size:34px;line-height:1;color:var(--wt-text2);font-weight:400}
+.dsh-wt_consoleAdd:hover .dsh-wt_consoleAddPlus{color:var(--dsw-alias-state-accent-primary,#4f8ef7)}
+.dsh-wt_consoleAddLabel{font-size:17px;font-weight:600;color:var(--wt-text2)}
+.dsh-wt_consoleAdd:hover .dsh-wt_consoleAddLabel{color:var(--dsw-alias-state-accent-primary,#4f8ef7)}
+/* 控制室入口卡：统筹主程序的差异化（渐变底 + 微光；无描边，颜色更亮更饱和） */
+.dsh-wt_projects .dsh-wt_consoleEntry{background:linear-gradient(135deg,rgba(109,164,255,.30),rgba(167,130,255,.22));border-color:transparent;box-shadow:0 0 14px rgba(96,150,255,.22)}
+.dsh-wt_projects .dsh-wt_consoleEntry:hover{background:linear-gradient(135deg,rgba(109,164,255,.42),rgba(167,130,255,.32));box-shadow:0 0 18px rgba(96,150,255,.32)}
+.dsh-wt_projects .dsh-wt_consoleEntry[data-on=true]{background:linear-gradient(135deg,rgba(109,164,255,.38),rgba(167,130,255,.28));box-shadow:0 0 18px rgba(96,150,255,.34)}
+.dsh-wt_projects .dsh-wt_consoleEntry .dsh-wt_layoutIcon{font-size:15px}
+.dsh-wt_projects .dsh-wt_consoleEntry .dsh-wt_layoutName{font-weight:600;color:var(--dsw-alias-label-primary,#e6e8eb)}
+/* 控制室强制绑定弹窗：左加入现有 / 右新建对话 */
+.dsh-wt_consoleBindCols{display:flex;gap:12px}
+.dsh-wt_consoleBindCol{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.dsh-wt_consoleBindColNew{border-left:1px solid var(--dsw-alias-border-l1,#262b36);padding-left:12px}
+.dsh-wt_consoleBindLabel{font-size:12px;font-weight:600;line-height:18px;color:var(--dsw-alias-label-primary,#e6e8eb)}
+.dsh-wt_consoleBindList{max-height:300px;overflow:auto;position:static}
+.dsh-wt_consoleBindEmpty{padding:20px 0;text-align:center;font-size:11px;color:var(--dsw-alias-label-tertiary,#6e7683)}
+.dsh-wt_consoleSelect,.dsh-wt_consoleInput{width:100%;box-sizing:border-box;padding:6px 8px;background:var(--dsw-alias-fill-l1,rgba(255,255,255,.03));border:1px solid var(--dsw-alias-border-l1,#262b36);border-radius:8px;color:var(--dsw-alias-label-primary,#e6e8eb);font:inherit;font-size:11.5px;line-height:16px;outline:none}
+.dsh-wt_consoleSelect:focus,.dsh-wt_consoleInput:focus{border-color:var(--dsw-alias-state-accent-primary,#4f8ef7)}
+.dsh-wt_consoleErr{margin:0;font-size:11px;line-height:16px;color:var(--dsw-alias-state-danger,#f85149)}
+.dsh-wt_consoleHint{margin:0;font-size:11px;line-height:16px;color:var(--dsw-alias-label-secondary,#aab6cd)}
+.dsh-wt_consoleCreateBtn{margin-top:2px;padding:7px 10px;border:1px solid var(--dsw-alias-state-accent-primary,#4f8ef7);border-radius:8px;background:transparent;color:var(--dsw-alias-state-accent-primary,#4f8ef7);font:inherit;font-size:12px;line-height:18px;cursor:pointer}
+.dsh-wt_consoleCreateBtn:hover:not(:disabled){background:var(--dsw-alias-fill-l1,rgba(255,255,255,.05))}
+.dsh-wt_consoleCreateBtn:disabled{opacity:.55;cursor:default}

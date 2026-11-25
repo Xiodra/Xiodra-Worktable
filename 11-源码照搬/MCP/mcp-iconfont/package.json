@@ -1,0 +1,62 @@
+{
+  "name": "@dawipong/mcp-iconfont",
+  "version": "0.3.1",
+  "description": "MCP server wrapping iconfont.cn's public search API — search free vector icons and illustrations from inside any MCP client, no login required",
+  "keywords": [
+    "mcp",
+    "modelcontextprotocol",
+    "ai",
+    "claude",
+    "iconfont",
+    "icons",
+    "svg",
+    "illustration",
+    "vector"
+  ],
+  "author": "nvrenshiren <nvrenshiren@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/nvrenshiren/mcp/tree/master/packages/iconfont#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nvrenshiren/mcp.git",
+    "directory": "packages/iconfont"
+  },
+  "bugs": {
+    "url": "https://github.com/nvrenshiren/mcp/issues"
+  },
+  "type": "module",
+  "bin": {
+    "mcp-iconfont": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "README.en.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "rimraf": "^6.0.1",
+    "tsx": "^4.19.2"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test --import tsx ./test/*.test.ts",
+    "clean": "rimraf dist",
+    "dev": "tsx watch src/index.ts",
+    "inspect": "pnpm build && npx @modelcontextprotocol/inspector node dist/index.js"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "at": "2026-11-22T04:40:17.276Z",
+  "checks": [
+    {
+      "key": "mechanism",
+      "name": "机制体检（全部项目 + 反例门禁）",
+      "ok": true,
+      "code": 0,
+      "problems": []
+    },
+    {
+      "key": "collab",
+      "name": "协作规矩（地盘表/漂移/体积/出口）",
+      "ok": true,
+      "code": 0,
+      "problems": []
+    },
+    {
+      "key": "docindex",
+      "name": "文档索引（未登记/死条目/状态词）",
+      "ok": true,
+      "code": 0,
+      "problems": []
+    },
+    {
+      "key": "scene6",
+      "name": "场景六件套",
+      "ok": true,
+      "code": 0,
+      "problems": []
+    },
+    {
+      "key": "memory",
+      "name": "场景记忆（§〇/指纹/绑定）",
+      "ok": true,
+      "code": 0,
+      "problems": []
+    },
+    {
+      "key": "mcp",
+      "name": "MCP 补丁在位",
+      "ok": true,
+      "code": 0,
+      "problems": []
+    }
+  ],
+  "fingerprints": {
+    "99-工作区/AGENTS.md": "MISSING",
+    "引擎数据/.dsh/场景记忆/_共享记忆/协作规矩.md": "eb6a4adf673e535e",
+    "引擎数据/.dsh/场景记忆/_共享记忆/索引.md": "bc2c55b078c946a8",
+    "外壳/main.js": "640adf56a96d5505",
+    "外壳/preload.js": "ecc36707b2bdd8c4",
+    "外壳/renderer/renderers.js": "8e6edc87ee731e7c",
+    "外壳/scenarios/_场景身份索引.md": "d29a05e9cf9dd6b2",
+    "MCP/mcp-iconfont/dist/iconfont.js": "0a5fca1bc11a0cbf",
+    "MCP/bundle-iconfont/cordis.patch.yml": "ae7abdbcd24efafa"
+  }
+}

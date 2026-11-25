@@ -1,0 +1,17 @@
+{
+  "name": "xiodra-workbench",
+  "productName": "XIODRA 工作台",
+  "version": "0.1.0",
+  "private": true,
+  "description": "XIODRA 工作台 · 纯 JS 外壳（当前阶段：只拉起 DSH 引擎）",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "45.3.3"
+  },
+  "engines": {
+    "node": ">=24.9 <25"
+  }
+}

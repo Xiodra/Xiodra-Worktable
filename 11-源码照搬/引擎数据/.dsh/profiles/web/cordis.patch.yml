@@ -1,0 +1,51 @@
+# 公开模板 patch：只挂「启动动画」
+- insert:
+    - id: boot-anim-host
+      name: dsh-plugin-boot-anim
+- id: ui-settings-general
+  name: "@deepseek-ai/dsh-client-ui-settings-general"
+  config:
+    welcomeNoticeVersion: 2026-09-28.1
+- id: llm-pi-ai
+  name: "@deepseek-ai/dsh-llm-pi-ai"
+  config:
+    providers:
+      freellmapi:
+        apiKeyEnv: FREELLMAPI_API_KEY
+        api: openai-completions
+        baseURL: http://127.0.0.1:31415/v1
+        models:
+          - id: auto:agnes-gen
+            name: "Auto: agnes-gen (named fallback chain)"
+            contextWindow: 262144
+            input:
+              - text
+              - image
+          - id: auto:deepseek
+            name: "Auto: deepseek (named fallback chain)"
+            input:
+              - text
+              - image
+            reasoningEfforts:
+              off: null
+              low: low
+              medium: medium
+              high: high
+          - id: auto:agnes-chat
+            name: "Auto: agnes-chat (named fallback chain)"
+            contextWindow: 262144
+- id: agent-default-model
+  name: "@deepseek-ai/dsh-agent-default-model"
+  config:
+    provider: freellmapi
+    model: auto:deepseek
+    reasoningEffort: high
+- id: ui-theme
+  name: "@deepseek-ai/dsh-client-ui-theme"
+  config:
+    preference: dark
+    fontSize: 12
+- id: ui-chat
+  name: "@deepseek-ai/dsh-client-ui-chat"
+  config:
+    transcriptView: standard

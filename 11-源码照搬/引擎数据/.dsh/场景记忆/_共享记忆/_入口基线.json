@@ -1,0 +1,10 @@
+{
+  "at": "2026-11-19T08:46:17.779Z",
+  "exe": {
+    "path": "D:\\Xiodra Worktable\\11-源码照搬\\外壳\\node_modules\\electron\\dist\\electron.exe",
+    "size": 250093056,
+    "sha": "cf7ff337d82f32a4",
+    "mtime": 315532800
+  },
+  "note": "入口基线：electron.exe 变了就 ⛔（npm install / 手工替换会改它）"
+}
